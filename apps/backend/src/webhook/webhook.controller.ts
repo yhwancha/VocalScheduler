@@ -8,6 +8,6 @@ export class WebhookController {
   @Post('voice')
   @HttpCode(HttpStatus.OK)
   async handleVoice(@Body() body: any) {
-    return this.webhookService.handleVoice(body);
+    return this.webhookService.handleMeeting(body);
   }
 }

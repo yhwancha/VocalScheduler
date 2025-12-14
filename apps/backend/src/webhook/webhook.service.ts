@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { IntentType } from 'src/parser/parser.dto';
-import { ParserService } from 'src/parser/parser.service';
+import { IntentType } from '../parser/parser.dto';
+import { ParserService } from '../parser/parser.service';
 
 @Injectable()
 export class WebhookService {
@@ -9,7 +9,7 @@ export class WebhookService {
 
   constructor(private readonly parserService: ParserService) {}
 
-  async handleVoice(payload: any) {
+  async handleMeeting(payload: any) {
     this.logger.log(`Incoming webhook payload: ${JSON.stringify(payload)}`);
 
     const text: string = payload?.text ?? '';

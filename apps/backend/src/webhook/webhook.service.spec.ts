@@ -1,51 +1,66 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WebhookService } from './webhook.service';
-import { CalendarService } from 'src/calendar/calendar.service';
+import { ParserService } from '../parser/parser.service';
+import { IntentType } from '../parser/parser.dto';
 
-// webhook.service.spec.ts
-describe("WebhookService", () => {
-  let service: WebhookService;
+describe('WebhookService', () => {
+  let webhookService: WebhookService;
+  let parserService: ParserService;
+
+  const mockParserService = {
+    parse: jest.fn(),
+  };
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({
+    const module: TestingModule = await Test.createTestingModule({
       providers: [
         WebhookService,
         {
-          provide: CalendarService,
-          useValue: mockCalendarService,
+          provide: ParserService,
+          useValue: mockParserService,
         },
       ],
     }).compile();
 
-    service = module.get(WebhookService);
+    webhookService = module.get(WebhookService);
+    parserService = module.get(ParserService);
+
+    jest.clearAllMocks();
   });
 
-  it("should create a calendar event when meeting.ready payload is valid", async () => {
-    const payload: MeetingReadyDto = {
-      event: "meeting.ready",
-      source: "chatgpt",
-      sessionId: "session_abc123",
-      confidence: 0.93,
-      intent: {
-        type: "CREATE_MEETING",
-        slots: {
-          title: "Intro Call",
-          startTime: "2025-12-14T15:00:00-06:00",
-          endTime: "2025-12-14T15:30:00-06:00",
-        },
-      },
-      rawTranscript: "I want to book a meeting tomorrow at 3pm",
+  it('should parse text and return booking intent', async () => {
+    const payload = {
+      text: 'I want to book a meeting tomorrow at 3pm',
     };
 
-    const result = await service.handleMeeting(payload);
-
-    expect(mockCalendarService.createMeeting).toHaveBeenCalledWith({
-      title: "Intro Call",
-      startTime: new Date("2025-12-14T15:00:00-06:00"),
-      endTime: new Date("2025-12-14T15:30:00-06:00"),
+    mockParserService.parse.mockResolvedValue({
+      type: IntentType.BOOK_APPOINTMENT,
+      date: new Date('2025-12-15T15:00:00'),
+      title: 'Meeting',
     });
 
-    expect(result).toEqual({ status: "created" });
+    const result = await webhookService.handleMeeting(payload);
+
+    expect(parserService.parse).toHaveBeenCalledWith(
+      'I want to book a meeting tomorrow at 3pm',
+    );
+    expect(result.message).toContain('Booking intent detected');
+    expect(result.intent.type).toBe(IntentType.BOOK_APPOINTMENT);
+  });
+
+  it('should handle unknown intent', async () => {
+    const payload = {
+      text: 'random text',
+    };
+
+    mockParserService.parse.mockResolvedValue({
+      type: IntentType.UNKNOWN,
+      date: null,
+      title: null,
+    });
+
+    const result = await webhookService.handleMeeting(payload);
+
+    expect(result.message).toContain('Intent not recognized');
   });
 });
-

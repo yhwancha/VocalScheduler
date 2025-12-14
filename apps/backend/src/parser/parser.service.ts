@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { BookAppointmentIntent, IntentType, UnkownIntent } from './parser.dto';
+import { BookAppointmentIntent, IntentType, UnknownIntent } from './parser.dto';
 
 export type ParsedIntent = 
     | { type: 'BOOK_APPOINTMENT'; date: Date }
     | { type: 'CANCEL_APPOINTMENT'; date: Date }
-    | { type: 'UNKOWN' }
+    | { type: 'UNKNOWN' }
 
 @Injectable()
 export class ParserService {
     async parse(text: string): Promise<ParsedIntent> {
         if (!text || text.length === 0) {
-            return { type: IntentType.UNKOWN } as UnkownIntent;
+            return { type: IntentType.UNKNOWN } as UnknownIntent;
         }
 
         const normalizedText = text.trim().toLowerCase();
@@ -24,7 +24,7 @@ export class ParserService {
             } as BookAppointmentIntent;
         }
 
-        return { type: IntentType.UNKOWN } as UnkownIntent;
+        return { type: IntentType.UNKNOWN } as UnknownIntent;
     }
     
     /**

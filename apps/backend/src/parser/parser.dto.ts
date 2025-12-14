@@ -1,7 +1,7 @@
 export enum IntentType {
     BOOK_APPOINTMENT = 'BOOK_APPOINTMENT',
     CANCEL_APPOINTMENT = 'CANCEL_APPOINTMENT',
-    UNKOWN = 'UNKOWN',
+    UNKNOWN = 'UNKNOWN',
 }
 
 export interface BookAppointmentIntent {
@@ -9,8 +9,8 @@ export interface BookAppointmentIntent {
     date: Date;
 }
 
-export interface UnkownIntent {
-    type: IntentType.UNKOWN;
+export interface UnknownIntent {
+    type: IntentType.UNKNOWN;
 }
 
-export type ParsedIntent = BookAppointmentIntent | UnkownIntent;
+export type ParsedIntent = BookAppointmentIntent | UnknownIntent;
