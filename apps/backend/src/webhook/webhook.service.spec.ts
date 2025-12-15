@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { WebhookService } from './webhook.service';
 import { ParserService } from '../parser/parser.service';
+import { BookingService } from '../booking/booking.service';
 import { IntentType } from '../parser/parser.dto';
 
 describe('WebhookService', () => {
@@ -11,6 +12,10 @@ describe('WebhookService', () => {
     parse: jest.fn(),
   };
 
+  const mockBookingService = {
+    createBooking: jest.fn(),
+  };
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -18,6 +23,10 @@ describe('WebhookService', () => {
         {
           provide: ParserService,
           useValue: mockParserService,
+        },
+        {
+          provide: BookingService,
+          useValue: mockBookingService,
         },
       ],
     }).compile();
@@ -39,7 +48,7 @@ describe('WebhookService', () => {
       title: 'Meeting',
     });
 
-    const result = await webhookService.handleMeeting(payload);
+    const result = await webhookService.handleReservation(payload);
 
     expect(parserService.parse).toHaveBeenCalledWith(
       'I want to book a meeting tomorrow at 3pm',
@@ -59,7 +68,9 @@ describe('WebhookService', () => {
       title: null,
     });
 
-    const result = await webhookService.handleMeeting(payload);
+    const result = await webhookService.handleReservation(payload);
+
+    console.log("result", result);
 
     expect(result.message).toContain('Intent not recognized');
   });

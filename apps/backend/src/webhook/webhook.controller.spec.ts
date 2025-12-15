@@ -2,12 +2,17 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { WebhookController } from './webhook.controller';
 import { WebhookService } from './webhook.service';
 import { ParserService } from '../parser/parser.service';
+import { BookingService } from '../booking/booking.service';
 
 describe('WebhookController', () => {
   let controller: WebhookController;
 
   const mockParserService = {
     parse: jest.fn(),
+  };
+
+  const mockBookingService = {
+    createBooking: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -18,6 +23,10 @@ describe('WebhookController', () => {
         {
           provide: ParserService,
           useValue: mockParserService,
+        },
+        {
+          provide: BookingService,
+          useValue: mockBookingService,
         },
       ],
     }).compile();

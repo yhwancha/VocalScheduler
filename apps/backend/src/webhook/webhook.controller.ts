@@ -7,7 +7,7 @@ export class WebhookController {
 
   @Post('voice')
   @HttpCode(HttpStatus.OK)
-  async handleVoice(@Body() body: any) {
-    return this.webhookService.handleMeeting(body);
+  async handleReservation(@Body() body: any) {
+    return this.webhookService.handleReservation(body);
   }
 }
