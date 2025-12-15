@@ -5,9 +5,10 @@ import { WebhookModule } from './webhook/webhook.module';
 import { ParserService } from './parser/parser.service';
 import { ParserModule } from './parser/parser.module';
 import { CalendarModule } from './calendar/calendar.module';
+import { BookingModule } from './booking/booking.module';
 
 @Module({
-  imports: [WebhookModule, ParserModule, CalendarModule],
+  imports: [WebhookModule, ParserModule, CalendarModule, BookingModule],
   controllers: [AppController],
   providers: [AppService, ParserService],
 })
